@@ -104,7 +104,6 @@
   <h1 style="font-size: 32px; margin: 0;">Checklist de Rotina - Analista de RH</h1>
 </div>
 <h5>RH-CKL-001-API Rev:01</h5>
-<!-- Formulário de informações iniciais -->
 <div class="form-container" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
   <div style="flex: 2;">
     <label for="nome">Nome:</label>
@@ -212,8 +211,9 @@
     checkboxes.forEach(c => {
       if (c !== checkbox) c.checked = false;
     });
-    const horaCampo = document.querySelector(`[name=hora_${nomeAtividade}]`);
-    const respostaCampo = document.querySelector(`[name=resposta_${nomeAtividade}]`);
+    // Correção: Uso de template string com aspas para o valor do atributo name
+    const horaCampo = document.querySelector(`input[name="hora_${nomeAtividade}"]`);
+    const respostaCampo = document.querySelector(`input[name="resposta_${nomeAtividade}"]`);
     horaCampo.value = new Date().toLocaleString('pt-BR');
     respostaCampo.value = valorSelecionado;
   }
@@ -230,9 +230,11 @@
     }
 
     let algumaMarcada = false;
+    // O loop deve usar o array 'atividades' para determinar o número de atividades
     for (let i = 1; i <= atividades.length; i++) {
-      const resposta = document.querySelector(`[name=resposta_atividade_${i}]`).value;
-      if (resposta === "Sim" || resposta === "Não") {
+      // Correção: Uso de template string com aspas para o valor do atributo name
+      const respostaCampo = document.querySelector(`input[name="resposta_atividade_${i}"]`);
+      if (respostaCampo && (respostaCampo.value === "Sim" || respostaCampo.value === "Não")) {
         algumaMarcada = true;
         break;
       }
@@ -272,7 +274,6 @@
   });
   
 </script>
-<!-- Botão de ajuda discreto no final da página -->
 <div style="text-align: center; margin-top: 60px; margin-bottom: 20px;">
   <a href="mailto:luis.correia@triunfante.com.br,marcelo.portella@triunfante.com.br,raphael.bortot@triunfante.com.br,daniela.nachbar@triunfante.com.br?subject=Ajuda%20-%20Checklist%20Coord%20Adm"
      style="
@@ -297,19 +298,32 @@
 <script>
   window.onload = function () {
     const dataInput = document.getElementById("data");
-    const hoje = new Date().toISOString().split("T")[0];
-    dataInput.value = hoje;
-    dataInput.min = hoje;
-    dataInput.max = hoje;
-    dataInput.readOnly = true; // impede que o usuário digite manualmente
+    // Obtém a data e hora local do dispositivo (Campinas, SP, Brasil)
+    const agora = new Date(); 
+    
+    const ano = agora.getFullYear();
+    // Mês é de 0 a 11, por isso somamos 1 e usamos padStart para ter sempre dois dígitos
+    const mes = String(agora.getMonth() + 1).padStart(2, '0'); 
+    // Dia do mês, com padStart para ter sempre dois dígitos
+    const dia = String(agora.getDate()).padStart(2, '0');
+
+    // Formata a data como 'YYYY-MM-DD'
+    const hojeFormatado = `${ano}-${mes}-${dia}`;
+    
+    // Define o valor do campo data para o dia atual
+    dataInput.value = hojeFormatado; 
+    // Restringe a data mínima ao dia atual, impedindo seleção de datas passadas
+    dataInput.min = hojeFormatado;   
+    // Restringe a data máxima ao dia atual, impedindo seleção de datas futuras
+    dataInput.max = hojeFormatado;   
+    // Impede que o usuário digite manualmente no campo
+    dataInput.readOnly = true;       
+    // Impede o clique para abrir o calendário de seleção de data
+    dataInput.style.pointerEvents = 'none'; 
+    // Opcional: Adiciona um estilo visual para indicar que o campo está desabilitado
+    dataInput.style.backgroundColor = '#e9ecef'; 
   };
 </script>
 
-
-
 </body>
-
-
-
-
 </html>
